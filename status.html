@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"> 
+    <title>狀態生成器</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+        }
+        input[type="text"] { 
+            width: 100%; 
+            padding: 15px; 
+            margin: 15px 0; 
+            font-size: 18px; 
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        button { 
+            background-color: #1f1e33 ;/* 深紫 */
+            color: white; 
+            padding: 15px 0; 
+            border: none; 
+            cursor: pointer; 
+            width: 100%; 
+            font-size: 20px; 
+            margin-top: 20px; 
+            border-radius: 8px;
+        }
+        #output { 
+            margin-top: 30px; 
+            padding: 15px; 
+            background-color: #e9ecef; 
+            border-radius: 8px; 
+            text-align: left; 
+            font-size: 16px;
+        }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; }
+        </style>
+</head>
+<body>
+    <h1>輸入狀態</h1>
+
+    <input type="text"
+    id="statusInput"
+    placeholder="例如：專心寫程式中">
+    
+    <button onclick="generateAndCopy()">
+        生成並複製訊息
+    </button>
+
+    <div id="output">
+        <p id="currentStatus">訊息將顯示在這裡</p>
+    </div>
+
+    <script>
+        //核心函式
+        function generateAndCopy(){
+            //設定input變數
+            const statusInput = document.getElementById('statusInput');
+            const statusText = statusInput.value.trim(); // .valut讀取文字，.trim() 移除前後空白
+
+            if (statusText === ""){
+                alert("請輸入狀態！");// 如果未輸入，彈出提示
+                return;// 停止
+            }
+
+            //取得現在時間
+            const now = new Date();
+            //處理時間格式
+            const options = {hour: '2-digit' , minute: '2-digit' , hour12: true};
+            const currentTime = now.toLocaleTimeString('zh-TW' , options)
+                                    .replace('AM' , '上午').replace('PM' , '下午');
+
+            const messageToCopy = `/關閉通知 "${currentTime}" "${statusText}"`;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(messageToCopy).then(() => {
+                    document.getElementById('currentStatus').innerText = 
+                        `複製成功。 \n複製內容:${messageToCopy}`;
+                }).catch(err => {
+                    document.getElementById('currentStatus').innerText = 
+                        `複製失敗。 \n請手動複製內容:${messageToCopy}`;
+                });
+            } else {
+                document.getElementById('currentStatus').innerText = 
+                    `複製失敗。請使用較新瀏覽器開啟此網站。\n請手動複製內容:${messageToCopy}`;                
+            }
+
+        }
+    </script>
+</body>
+</html>
